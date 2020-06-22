@@ -1,0 +1,20 @@
+{
+    "name": "featherbits/php-service-container",
+    "description": "IOC support for php apps",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Elvijs Teikmanis",
+            "email": "e.teiks@gmail.com"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {"Featherbits\\": "src/"}
+    },
+    "provide": {
+        "psr/container-implementation": "1.0.0"
+    }
+}
