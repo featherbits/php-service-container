@@ -3,7 +3,7 @@
 namespace Featherbits\ServiceContainer\InstanceGetterStrategies;
 
 use Featherbits\ServiceContainer\Contract\InstanceGetter;
-use Featherbits\ServiceContainer\Contract\ResolutionContext;
+use Featherbits\ServiceContainer\Contract\GetterContext;
 
 class ByType implements InstanceGetter
 {
@@ -14,7 +14,7 @@ class ByType implements InstanceGetter
         $this->type = $type;
     }
 
-    public function get(ResolutionContext $context): object
+    public function get(GetterContext $context): object
     {
         return $context->getActivator()->instantiate($this->type);
     }

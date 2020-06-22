@@ -14,7 +14,7 @@ class Container implements ContainerContract
     /**
      * @var InstanceGetter[]
      */
-    private array $entries;
+    private array $entries = [];
 
     private ActivatorContract $activator;
 
@@ -32,7 +32,7 @@ class Container implements ContainerContract
     {
         if ($this->has($type)) {
             try {
-                return $this->entries[$type]->get(new ResolutionContext($this, $this->activator, $type));
+                return $this->entries[$type]->get(new GetterContext($this, $this->activator, $type));
             } catch (Throwable $e) {
                 throw new ContainerException('Failed to obtain instance of type ' . $type, 0, $e);
             }

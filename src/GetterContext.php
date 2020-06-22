@@ -3,10 +3,10 @@
 namespace Featherbits\ServiceContainer;
 
 use Featherbits\ServiceContainer\Contract\Activator as ActivatorContract;
-use Featherbits\ServiceContainer\Contract\ResolutionContext as ResolutionContextContract;
+use Featherbits\ServiceContainer\Contract\GetterContext as GetterContextContract;
 use Featherbits\ServiceContainer\Contract\Container;
 
-class ResolutionContext implements ResolutionContextContract
+class GetterContext implements GetterContextContract
 {
     private Container $container;
     private string $type;

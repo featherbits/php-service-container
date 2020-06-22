@@ -3,7 +3,7 @@
 namespace Featherbits\ServiceContainer\InstanceGetterStrategies;
 
 use Featherbits\ServiceContainer\Contract\InstanceGetter;
-use Featherbits\ServiceContainer\Contract\ResolutionContext;
+use Featherbits\ServiceContainer\Contract\GetterContext;
 
 class ByFactory implements InstanceGetter
 {
@@ -14,7 +14,7 @@ class ByFactory implements InstanceGetter
         $this->factory = $factory;
     }
 
-    public function get(ResolutionContext $context): object
+    public function get(GetterContext $context): object
     {
         return call_user_func($this->factory, $context);
     }

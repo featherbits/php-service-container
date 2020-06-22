@@ -17,7 +17,7 @@ use Featherbits\ServiceContainer\Contract\Activator as ActivatorContract;
 class Activator implements ActivatorContract
 {
     private ContainerContract $container;
-    private ?ResolutionSequence $sequence;
+    private ?ResolutionSequence $sequence = null;
 
     public function __construct(ContainerContract $container)
     {
@@ -28,7 +28,7 @@ class Activator implements ActivatorContract
     {
         try {
             $reflection = self::getCallableReflectionFunctionAbstract($callable);
-            return $this->protect(self::getFunctionIdentifier($reflection), function () use ($reflection, $callable) {
+            return $this->track(self::getFunctionIdentifier($reflection), function () use ($reflection, $callable) {
                 return call_user_func_array($callable, $this->getArguments($reflection));
             });
         } catch (Throwable $e) {
@@ -39,7 +39,7 @@ class Activator implements ActivatorContract
     public function instantiate(string $type): object
     {
         try {
-            return $this->protect($type, function () use ($type) {
+            return $this->track($type, function () use ($type) {
                 $reflection = new ReflectionClass($type);
                 return ($constructor = $reflection->getConstructor())
                     ? $reflection->newInstanceArgs($this->getArguments($constructor))
@@ -50,7 +50,7 @@ class Activator implements ActivatorContract
         }
     }
 
-    private function protect(string $identifier, callable $callable)
+    private function track(string $identifier, callable $callable)
     {
         $previous = $this->sequence;
         $this->sequence = $previous ? $previous->add($identifier) : ResolutionSequence::create($identifier);
@@ -100,13 +100,13 @@ class Activator implements ActivatorContract
         $arguments = [];
 
         foreach ($parameters as $parameter) {
-            $arguments[] = $this->resolveParameter($parameter);
+            $arguments[] = $this->getArgument($parameter);
         }
 
         return $arguments;
     }
 
-    private function resolveParameter(ReflectionParameter $parameter)
+    private function getArgument(ReflectionParameter $parameter)
     {
         /** @var \ReflectionNamedType */
         $type = $parameter->getType();
@@ -124,6 +124,6 @@ class Activator implements ActivatorContract
             return $this->instantiate($typeName);
         }
 
-        throw new ContainerException('Failed to resolve parameter ' . $parameter->getName());
+        throw new ContainerException('Cannot resolve value for parameter ' . $parameter->getName());
     }
 }

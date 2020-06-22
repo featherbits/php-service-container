@@ -3,7 +3,7 @@
 namespace Featherbits\ServiceContainer\InstanceGetterStrategies;
 
 use Featherbits\ServiceContainer\Contract\InstanceGetter;
-use Featherbits\ServiceContainer\Contract\ResolutionContext;
+use Featherbits\ServiceContainer\Contract\GetterContext;
 
 class AsSingleton implements InstanceGetter
 {
@@ -15,7 +15,7 @@ class AsSingleton implements InstanceGetter
         $this->getter = $getter;
     }
 
-    public function get(ResolutionContext $context): object
+    public function get(GetterContext $context): object
     {
         return $this->instance ?? ($this->instance = $this->getter->get($context));
     }

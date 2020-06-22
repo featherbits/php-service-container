@@ -4,5 +4,5 @@ namespace Featherbits\ServiceContainer\Contract;
 
 interface InstanceGetter
 {
-    public function get(ResolutionContext $context): object;
+    public function get(GetterContext $context): object;
 }

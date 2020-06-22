@@ -2,7 +2,7 @@
 
 namespace Featherbits\ServiceContainer\Contract;
 
-interface ResolutionContext
+interface GetterContext
 {
     public function getContainer(): Container;
     public function getActivator(): Activator;
