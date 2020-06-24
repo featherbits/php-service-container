@@ -9,7 +9,6 @@ use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionFunctionAbstract;
 use ReflectionParameter;
-use Throwable;
 use ReflectionClass;
 use Featherbits\ServiceContainer\Contract\Activator as ActivatorContract;
 
@@ -26,28 +25,20 @@ class Activator implements ActivatorContract
 
     public function call(callable $callable)
     {
-        try {
-            $reflection = self::getCallableReflectionFunctionAbstract($callable);
-            return $this->track(self::getFunctionIdentifier($reflection), function () use ($reflection, $callable) {
-                return call_user_func_array($callable, $this->getArguments($reflection));
-            });
-        } catch (Throwable $e) {
-            throw new ContainerException('Failed to call function', 0, $e);
-        }
+        $reflection = self::getCallableReflectionFunctionAbstract($callable);
+        return $this->track(self::getFunctionIdentifier($reflection), function () use ($reflection, $callable) {
+            return call_user_func_array($callable, $this->getArguments($reflection));
+        });
     }
 
     public function instantiate(string $type): object
     {
-        try {
-            return $this->track($type, function () use ($type) {
-                $reflection = new ReflectionClass($type);
-                return ($constructor = $reflection->getConstructor())
-                    ? $reflection->newInstanceArgs($this->getArguments($constructor))
-                    : $reflection->newInstance();
-            });
-        } catch (Throwable $e) {
-            throw new ContainerException('Failed to instantiate ' . $type, 0, $e);
-        }
+        return $this->track($type, function () use ($type) {
+            $reflection = new ReflectionClass($type);
+            return ($constructor = $reflection->getConstructor())
+                ? $reflection->newInstanceArgs($this->getArguments($constructor))
+                : $reflection->newInstance();
+        });
     }
 
     private function track(string $identifier, callable $callable)
