@@ -34,13 +34,13 @@ class Activator implements ActivatorContract
     public function instantiate(string $type): object
     {
         return $this->track($type, function () use ($type) {
+            if ($this->container->has($type)) {
+                return $this->container->get($type);
+            }
+
             $reflection = new ReflectionClass($type);
 
             if ($reflection->isInterface() or $reflection->isAbstract()) {
-                if ($this->container->has($type)) {
-                    return $this->container->get($type);
-                }
-
                 throw new ContainerException('Type [' . $type . '] is not instantiable.');
             }
 
