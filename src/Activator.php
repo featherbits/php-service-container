@@ -35,6 +35,15 @@ class Activator implements ActivatorContract
     {
         return $this->track($type, function () use ($type) {
             $reflection = new ReflectionClass($type);
+
+            if ($reflection->isInterface() or $reflection->isAbstract()) {
+                if ($this->container->has($type)) {
+                    return $this->container->get($type);
+                }
+
+                throw new ContainerException('Type [' . $type . '] is not instantiable.');
+            }
+
             return ($constructor = $reflection->getConstructor())
                 ? $reflection->newInstanceArgs($this->getArguments($constructor))
                 : $reflection->newInstance();
@@ -67,7 +76,7 @@ class Activator implements ActivatorContract
             return new ReflectionFunction($callable);
         }
 
-        throw new ContainerException('ReflectionFunctionAbstract for given callable type not implemented');
+        throw new ContainerException('ReflectionFunctionAbstract for given callable type not implemented.');
     }
 
     private static function getFunctionIdentifier(ReflectionFunctionAbstract $reflection): string
@@ -82,7 +91,7 @@ class Activator implements ActivatorContract
             return $reflection->getDeclaringClass()->getName() . '::' . $reflection->getName();
         }
 
-        throw new ContainerException('Function identifier not implemented for reflection of type ' . get_class($reflection));
+        throw new ContainerException('Function identifier not implemented for reflection of type ' . get_class($reflection) . '.');
     }
 
     private function getArguments(ReflectionFunctionAbstract $reflection): array
@@ -115,6 +124,6 @@ class Activator implements ActivatorContract
             return $this->instantiate($typeName);
         }
 
-        throw new ContainerException('Cannot resolve value for parameter ' . $parameter->getName());
+        throw new ContainerException('Cannot resolve value for parameter [' . $parameter->getName() . '] with type [' . $typeName . '].');
     }
 }
